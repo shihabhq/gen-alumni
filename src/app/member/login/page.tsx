@@ -35,11 +35,9 @@ export default function LoginPage() {
         return;
       }
 
-      localStorage.setItem("access_token", data.tokens.access);
-      localStorage.setItem("refresh_token", data.tokens.refresh);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      console.log(data.user);
-
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
+      localStorage.setItem("user", JSON.stringify(data.user?.student_profile));
       router.push("/member/profile");
     } catch (err) {
       setError("Invalid credentials. Please try again.");

@@ -71,8 +71,16 @@ export const login = async (username: string, password: string) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
-  if (!response.ok) throw new Error("Login failed");
-  return response.json();
+  const responseData = await response.json();
+  console.log(responseData);
+
+  if (!response.ok) {
+    // Log the backend error message
+    console.error("Backend error:", responseData);
+    throw new Error(responseData.message || "Registration failed");
+  }
+
+  return responseData;
 };
 
 //logout
