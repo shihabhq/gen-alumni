@@ -63,10 +63,10 @@ export default function Home() {
         }}
       >
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
             BBA General Students and Alumni Network
           </h1>
-          <p className="text-lg text-white/90 mb-8">
+          <p className="text-base sm:text-lg text-white/90 mb-8">
             Connect, share, and grow with fellow alumni and current students
           </p>
 

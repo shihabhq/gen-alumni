@@ -27,7 +27,10 @@ interface SearchBarProps {
 
 export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
   const [query, setQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(true);
+  const isClient = typeof window !== "undefined";
+  const initialShowFilters = isClient ? window.innerWidth >= 768 : false;
+
+  const [showFilters, setShowFilters] = useState(initialShowFilters);
   const [filters, setFilters] = useState({
     batch: "",
     program: "",
