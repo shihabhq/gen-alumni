@@ -48,7 +48,7 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
   const clearFilters = () => {
     setFilters({ batch: "", program: "", company: "", country: "" });
     setQuery("");
-    onSearch("", { batch: "", program: "", company: "", country: "" });
+    onSearch("", { batch: "", company: "", country: "" });
   };
 
   return (
@@ -123,7 +123,6 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
               ))}
             </select>
           </div>
-
 
           {/* Company Filter */}
           <div>

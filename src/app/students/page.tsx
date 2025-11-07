@@ -383,7 +383,7 @@ export default function Students() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedStudents.map((student) => (
-                <Link key={student.id} href={`/profile/${student.uni_id}`}>
+                <Link key={student.id} href={`/profile/${student.id}`}>
                   <StudentCard student={student} />
                 </Link>
               ))}

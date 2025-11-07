@@ -32,10 +32,16 @@ export const getStudentProfiles = async (filters?: {
 };
 
 // Get single profile
-export const getStudentProfile = async (uniId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/v1/profile/${uniId}/`);
-  if (!response.ok) throw new Error("Profile not found");
-  return response.json();
+export const getStudentProfile = async (id: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/v1/profile/${id}/`);
+  const responseData = await response.json(); // only once!
+
+  if (!response.ok) {
+    console.error("Backend error:", responseData);
+    throw new Error(responseData.message || "Profile not found");
+  }
+
+  return responseData; // return parsed data
 };
 
 export const refreshAccessToken = async () => {
@@ -65,8 +71,16 @@ export const login = async (username: string, password: string) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
-  if (!response.ok) throw new Error("Login failed");
-  return response.json();
+  const responseData = await response.json();
+  console.log(responseData);
+
+  if (!response.ok) {
+    // Log the backend error message
+    console.error("Backend error:", responseData);
+    throw new Error(responseData.message || "Registration failed");
+  }
+
+  return responseData;
 };
 
 //logout
@@ -103,16 +117,26 @@ export const register = async (data: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error("Registration failed");
-    return response.json();
-  } catch (e) {
-    console.log(e);
+
+    // Parse JSON even if it's an error
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      // Log the backend error message
+      console.error("Backend error:", responseData);
+      throw new Error(responseData.message || "Registration failed");
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error("Register function error:", error);
+    throw error; // throw it so your handleRegister catch block can catch it
   }
 };
 
 // Update profile
 export const updateProfile = async (
-  uniId: string,
+  id: number,
   data: Partial<{
     first_name: string;
     last_name: string;
@@ -127,13 +151,19 @@ export const updateProfile = async (
   }>
 ) => {
   const response = await fetchWithAuth(
-    `${API_BASE_URL}/api/v1/profile/${uniId}/`,
+    `${API_BASE_URL}/api/v1/profile/${id}/`,
     {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(data),
     }
   );
+  console.log(data);
+  const responseData = await response.json();
 
-  if (!response.ok) throw new Error("Failed to update profile");
-  return response.json();
+  if (!response.ok) {
+    console.error("Backend error:", responseData);
+    throw new Error("Profile not found");
+  }
+  // if (!response.ok) throw new Error("Failed to update profile");
+  return responseData;
 };

@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { getStudentProfile } from "@/lib/api";
 
 interface StudentProfile {
+  id: number;
   first_name: string;
   last_name: string;
   uni_id: string;
@@ -24,59 +25,31 @@ interface StudentProfile {
   is_verified: boolean;
 }
 
-// Dummy profiles database
-const dummyProfiles: Record<string, StudentProfile> = {
-  "2021-1-60-001": {
-    first_name: "John",
-    last_name: "Doe",
-    uni_id: "2021-1-60-001",
-    batch: "BBA 56th",
-    program: "bba",
-    current_job_position: "Software Engineer",
-    current_company: "Tech Corp",
-    profile_pic: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-    email: "john@example.com",
-    phone: "01712345678",
-    linkedin: "https://linkedin.com/in/johndoe",
-    facebook: "https://facebook.com/johndoe",
-    instagram: "https://instagram.com/johndoe",
-    bio: "Passionate software engineer with 3+ years of experience",
-    is_cr: false,
-    is_verified: true,
-  },
-  "2021-1-60-002": {
-    first_name: "Sarah",
-    last_name: "Khan",
-    uni_id: "2021-1-60-002",
-    batch: "BBA 56th",
-    program: "bba",
-    current_job_position: "Product Manager",
-    current_company: "Digital Solutions",
-    profile_pic: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    email: "sarah@example.com",
-    phone: "01798765432",
-    linkedin: "https://linkedin.com/in/sarah-khan",
-    facebook: "https://facebook.com/sarah.khan",
-    instagram: "https://instagram.com/sarah_khan",
-    bio: "Product management enthusiast building innovative solutions",
-    is_cr: true,
-    is_verified: true,
-  },
-};
-
 export default function PublicProfilePage() {
   const params = useParams();
-  const uniId = params.uni_id as string;
+  const id = params.id as string;
+
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    // ✅ Check localStorage login status
+    const user = localStorage.getItem("user");
+    const accessToken = localStorage.getItem("access_token");
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    if (user && accessToken && refreshToken) {
+      setIsLoggedIn(true);
+    }
+
+    // ✅ Fetch profile data
     const fetchProfile = async () => {
       try {
-        const profileData = await getStudentProfile(uniId);
+        const profileData = await getStudentProfile(id);
         setProfile(profileData);
       } catch (error) {
-        console.error("[v0] Failed to fetch profile:", error);
+        console.error(error);
         setProfile(null);
       } finally {
         setLoading(false);
@@ -84,7 +57,7 @@ export default function PublicProfilePage() {
     };
 
     fetchProfile();
-  }, [uniId]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -213,16 +186,6 @@ export default function PublicProfilePage() {
               <p className="font-medium">{profile.uni_id}</p>
             </div>
 
-            <div>
-              <h3
-                className="text-sm font-semibold mb-2"
-                style={{ color: "#007f8c" }}
-              >
-                PROGRAM
-              </h3>
-              <p className="font-medium">{profile.program.toUpperCase()}</p>
-            </div>
-
             {profile.current_company && (
               <div>
                 <h3
@@ -235,7 +198,7 @@ export default function PublicProfilePage() {
               </div>
             )}
 
-            {profile.current_job_position && (
+            {profile?.current_job_position && (
               <div>
                 <h3
                   className="text-sm font-semibold mb-2"
@@ -247,7 +210,8 @@ export default function PublicProfilePage() {
               </div>
             )}
 
-            {profile.email && (
+            {/* ✅ Only show if logged in */}
+            {isLoggedIn && profile?.email && (
               <div>
                 <h3
                   className="text-sm font-semibold mb-2"
@@ -259,7 +223,7 @@ export default function PublicProfilePage() {
               </div>
             )}
 
-            {profile.phone && (
+            {isLoggedIn && profile?.phone && (
               <div>
                 <h3
                   className="text-sm font-semibold mb-2"
@@ -273,7 +237,7 @@ export default function PublicProfilePage() {
           </div>
 
           {/* Social Media Links */}
-          {(profile.linkedin || profile.facebook || profile.instagram) && (
+          {(profile?.linkedin || profile?.facebook || profile?.instagram) && (
             <div className="mt-8">
               <h2
                 className="text-2xl font-bold mb-4"

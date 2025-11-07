@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register } from "../../../lib/api";
@@ -30,6 +30,14 @@ export default function RegisterPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access_token");
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    if (accessToken || refreshToken) {
+      router.replace("/member/profile"); // prevents going back to login page
+    }
+  }, [router]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +83,9 @@ export default function RegisterPage() {
         return;
       }
 
-      localStorage.setItem("access_token", data.access_token || data.access);
+      console.log(data);
+      localStorage.setItem("access_token", data.tokens.access || data.access);
+      localStorage.setItem("refresh_token", data.tokens.refresh || data.access);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       router.push("/member/profile");
@@ -229,29 +239,6 @@ export default function RegisterPage() {
                   ))}
                 </select>
               </div>
-              {/* <div>
-                <label
-                  className="block text-sm font-medium mb-2"
-                  style={{ color: "#1e293b" }}
-                >
-                  Program *
-                </label>
-                <select
-                  name="Country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
-                  style={{ borderColor: "#007f8c" }}
-                  required
-                >
-                  <option value="">Select Program</option>
-                  {PROGRAMS.map((program) => (
-                    <option key={program} value={program}>
-                      {program.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
             </div>
 
             {/* Password Fields */}

@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { login } from "@/lib/api";
@@ -14,6 +14,15 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access_token");
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    if (accessToken || refreshToken) {
+      router.replace("/member/profile"); // prevents going back to login page
+    }
+  }, [router]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -21,11 +30,14 @@ export default function LoginPage() {
 
     try {
       const data = await login(username, password);
+      if (!data) {
+        setError("An unexpected error occured");
+        return;
+      }
 
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
+      localStorage.setItem("user", JSON.stringify(data.user?.student_profile));
       router.push("/member/profile");
     } catch (err) {
       setError("Invalid credentials. Please try again.");
