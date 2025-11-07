@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getStudentProfile } from "@/lib/api";
+import { Facebook, Instagram, Linkedin } from "lucide-react";
 
 interface StudentProfile {
   id: number;
@@ -251,10 +252,10 @@ export default function PublicProfilePage() {
                     href={profile.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-6 py-2 rounded-lg font-semibold text-white transition-all hover:shadow-lg"
-                    style={{ backgroundColor: "#006747" }}
+                    className="px-6 py-2 flex items-center gap-1 rounded-lg font-semibold text-white transition-all hover:shadow-lg"
+                    style={{ backgroundColor: "#0A66C2" }}
                   >
-                    LinkedIn
+                    <Linkedin size={20} /> LinkedIn
                   </a>
                 )}
                 {profile.facebook && (
@@ -262,10 +263,10 @@ export default function PublicProfilePage() {
                     href={profile.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-6 py-2 rounded-lg font-semibold text-white transition-all hover:shadow-lg"
-                    style={{ backgroundColor: "#007f8c" }}
+                    className="px-6 py-2 rounded-lg flex items-center gap-1 font-semibold text-white transition-all hover:shadow-lg"
+                    style={{ backgroundColor: "#1877F2" }}
                   >
-                    Facebook
+                    <Facebook size={20} /> Facebook
                   </a>
                 )}
                 {profile.instagram && (
@@ -273,10 +274,10 @@ export default function PublicProfilePage() {
                     href={profile.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-6 py-2 rounded-lg font-semibold transition-all hover:shadow-lg"
-                    style={{ backgroundColor: "#a3e635", color: "#1e293b" }}
+                    className="px-6 py-2 flex items-center gap-1 rounded-lg font-semibold transition-all text-white hover:shadow-lg"
+                    style={{ backgroundColor: "#E1306C" }}
                   >
-                    Instagram
+                    <Instagram size={20} /> Instagram
                   </a>
                 )}
               </div>

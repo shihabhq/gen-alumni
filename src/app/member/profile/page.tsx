@@ -522,7 +522,7 @@ export default function ProfilePage() {
                       onClick={() =>
                         document.getElementById("profile-pic")?.click()
                       }
-                      className="px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all duration-200 shadow-sm"
+                      className="px-4 py-2 text-sm font-semibold rounded-lg bg-emerald text-white hover:bg-emerald-800 transition-all duration-200 shadow-sm"
                     >
                       Choose Image
                     </button>
@@ -772,7 +772,7 @@ export default function ProfilePage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-4 py-2 rounded font-medium text-white"
-                        style={{ backgroundColor: "#006747" }}
+                        style={{ backgroundColor: "#0A66C2" }}
                       >
                         LinkedIn
                       </a>
@@ -783,7 +783,7 @@ export default function ProfilePage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-4 py-2 rounded font-medium text-white"
-                        style={{ backgroundColor: "#007f8c" }}
+                        style={{ backgroundColor: "#1877F2" }}
                       >
                         Facebook
                       </a>
@@ -794,7 +794,7 @@ export default function ProfilePage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-4 py-2 rounded font-medium text-white"
-                        style={{ backgroundColor: "#a3e635", color: "#1e293b" }}
+                        style={{ backgroundColor: "#E1306C" }}
                       >
                         Instagram
                       </a>
