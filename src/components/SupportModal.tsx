@@ -40,7 +40,7 @@ export default function SupportModal({ isOpen, onClose }: SupportModalProps) {
 
           <p className="text-gray-600 mb-6 text-sm leading-relaxed">
             The website needs around <strong>1200BDT</strong> worth of server
-            running each month. To help us run this initiative further, your
+            running each month. To help us run this initiative further, any amount you send as
             support is very valuable for the whole community.
           </p>
 
@@ -115,8 +115,8 @@ export default function SupportModal({ isOpen, onClose }: SupportModalProps) {
             </div>
           </div>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
-            Thank you for your generous support! 💚
+          <p className="text-center text-gray-500 mt-6">
+            Any amount you send is valuable! 💚
           </p>
         </div>
       </div>
