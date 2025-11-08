@@ -28,8 +28,8 @@ export default function Achievements() {
             Coming Soon
           </p>
           <p className="text-lg text-charcoal/70">
-            Wea are working to showcase the amazing achievements and milestones of
-            our BBA General Department. Check back soon for updates!
+            We are working to showcase the amazing achievements and milestones
+            of our BBA General Department. Check back soon for updates!
           </p>
         </div>
       </div>

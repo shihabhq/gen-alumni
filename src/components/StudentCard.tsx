@@ -57,7 +57,7 @@ export default function StudentCard({ student }: StudentCardProps) {
       )}
 
       {/* Action */}
-      <button className="mt-5 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full text-white bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 transition-all duration-200">
+      <button className="mt-5 inline-flex cursor-pointer items-center gap-2 px-4 py-2 text-sm font-medium rounded-full text-white bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 transition-all duration-200">
         View Profile
         <span className="text-lg translate-x-0 group-hover:translate-x-1 transition-transform duration-200">
           →

@@ -9,6 +9,7 @@ import { Facebook, Instagram, Linkedin } from "lucide-react";
 interface StudentProfile {
   id: number;
   first_name: string;
+  country: string;
   last_name: string;
   uni_id: string;
   bio: string;
@@ -184,8 +185,19 @@ export default function PublicProfilePage() {
               >
                 UNIVERSITY ID
               </h3>
-              <p className="font-medium">{profile.uni_id}</p>
+              <p className="font-medium">{profile?.uni_id}</p>
             </div>
+            {profile?.country && (
+              <div>
+                <h3
+                  className="text-sm font-semibold mb-2"
+                  style={{ color: "#007f8c" }}
+                >
+                  Residing Country
+                </h3>
+                <p className="font-medium">{profile.country}</p>
+              </div>
+            )}
 
             {profile.current_company && (
               <div>
