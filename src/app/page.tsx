@@ -12,6 +12,7 @@ interface Student {
   first_name: string;
   last_name: string;
   profile_pic?: string;
+  country: string;
   current_company?: string;
   current_job_position?: string;
   batch: string;
@@ -39,7 +40,7 @@ export default function Home() {
         const profileResults = await getStudentProfiles({
           batch: filters.batch,
           company: filters.company,
-          position: filters.country,
+          country: filters.country,
         });
         results = profileResults.results || [];
       }

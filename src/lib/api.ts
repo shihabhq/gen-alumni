@@ -20,7 +20,7 @@ export const getStudentProfiles = async (filters?: {
 }) => {
   const params = new URLSearchParams();
   if (filters?.batch) params.append("batch", filters.batch);
-  if (filters?.country) params.append("program", filters.country);
+  if (filters?.country) params.append("country", filters.country);
   if (filters?.company) params.append("company", filters.company);
   if (filters?.position) params.append("position", filters.position);
 
