@@ -4,7 +4,7 @@ import "../styles/globals.css";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BBA GEN Studend and Alumni Connect",
+  title: "BBA GEN Student and Alumni Connect",
   description:
     "The official Alumni and student connection database of bup bba students.",
   keywords: [
