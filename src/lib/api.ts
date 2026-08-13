@@ -1,6 +1,8 @@
 import { fetchWithAuth } from "./refresh";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// This app now serves its own data API (see src/app/api/v1) backed by Prisma,
+// so requests are same-origin — no external backend URL needed anymore.
+const API_BASE_URL = "";
 
 // Search API
 export const searchStudents = async (query: string) => {
@@ -25,7 +27,7 @@ export const getStudentProfiles = async (filters?: {
   if (filters?.position) params.append("position", filters.position);
 
   const response = await fetch(
-    `${API_BASE_URL}/api/v1/profile/?${params.toString()}`
+    `${API_BASE_URL}/api/v1/profile?${params.toString()}`
   );
   if (!response.ok) throw new Error("Failed to fetch profiles");
   return response.json();
@@ -33,7 +35,7 @@ export const getStudentProfiles = async (filters?: {
 
 // Get single profile
 export const getStudentProfile = async (id: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/v1/profile/${id}/`);
+  const response = await fetch(`${API_BASE_URL}/api/v1/profile/${id}`);
   const responseData = await response.json(); // only once!
 
   if (!response.ok) {
@@ -151,7 +153,7 @@ export const updateProfile = async (
   }>
 ) => {
   const response = await fetchWithAuth(
-    `${API_BASE_URL}/api/v1/profile/${id}/`,
+    `${API_BASE_URL}/api/v1/profile/${id}`,
     {
       method: "PATCH",
       body: JSON.stringify(data),

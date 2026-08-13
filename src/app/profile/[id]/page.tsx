@@ -4,7 +4,19 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getStudentProfile } from "@/lib/api";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
+import {
+  ArrowLeft,
+  BadgeCheck,
+  Building2,
+  Crown,
+  Facebook,
+  Globe2,
+  GraduationCap,
+  Instagram,
+  Linkedin,
+  Mail,
+  Phone,
+} from "lucide-react";
 
 interface StudentProfile {
   id: number;
@@ -27,6 +39,29 @@ interface StudentProfile {
   is_verified: boolean;
 }
 
+function InfoItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value?: string | null;
+}) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-3">
+      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald">
+        {icon}
+      </span>
+      <div>
+        <h3 className="text-xs font-semibold tracking-wide text-muted uppercase">{label}</h3>
+        <p className="mt-0.5 font-medium text-ink">{value}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function PublicProfilePage() {
   const params = useParams();
   const id = params.id as string;
@@ -36,7 +71,6 @@ export default function PublicProfilePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // ✅ Check localStorage login status
     const user = localStorage.getItem("user");
     const accessToken = localStorage.getItem("access_token");
     const refreshToken = localStorage.getItem("refresh_token");
@@ -45,7 +79,6 @@ export default function PublicProfilePage() {
       setIsLoggedIn(true);
     }
 
-    // ✅ Fetch profile data
     const fetchProfile = async () => {
       try {
         const profileData = await getStudentProfile(id);
@@ -63,33 +96,25 @@ export default function PublicProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center">
-        <div
-          className="animate-spin rounded-full h-12 w-12 border-b-2"
-          style={{ borderColor: "#006747" }}
-        ></div>
+      <div className="flex min-h-screen items-center justify-center bg-offwhite pt-20">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-50 border-t-emerald" />
       </div>
     );
   }
 
   if (!profile) {
     return (
-      <div
-        className="min-h-screen pt-20 flex items-center justify-center"
-        style={{ backgroundColor: "#f8fafc" }}
-      >
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4" style={{ color: "#006747" }}>
-            Profile Not Found
-          </h1>
-          <p className="text-charcoal/60 mb-6">
+      <div className="flex min-h-screen items-center justify-center bg-offwhite px-4 pt-20 text-center">
+        <div>
+          <h1 className="font-display text-3xl font-bold text-ink">Profile Not Found</h1>
+          <p className="mt-2 text-muted">
             The profile you are looking for does not exist.
           </p>
           <Link
             href="/"
-            className="inline-block px-6 py-3 rounded-lg font-semibold text-white transition-all"
-            style={{ backgroundColor: "#006747" }}
+            className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-emerald px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-dark"
           >
+            <ArrowLeft size={16} />
             Back to Home
           </Link>
         </div>
@@ -97,60 +122,74 @@ export default function PublicProfilePage() {
     );
   }
 
+  const initials = `${profile.first_name[0] ?? ""}${profile.last_name[0] ?? ""}`;
+  const socials = [
+    { key: "linkedin", href: profile.linkedin, icon: Linkedin, label: "LinkedIn", color: "#0A66C2" },
+    { key: "facebook", href: profile.facebook, icon: Facebook, label: "Facebook", color: "#1877F2" },
+    { key: "instagram", href: profile.instagram, icon: Instagram, label: "Instagram", color: "#E1306C" },
+  ].filter((s) => s.href);
+
   return (
-    <div className="min-h-screen pt-20" style={{ backgroundColor: "#f8fafc" }}>
+    <div className="min-h-screen bg-offwhite pt-20">
       {/* Header */}
-      <div
-        className="py-12 px-4 text-center"
-        style={{
-          background: "linear-gradient(135deg, #006747 0%, #007f8c 100%)",
-        }}
-      >
-        <div className="max-w-4xl mx-auto">
-          {/* Profile Image */}
-          <div className="mb-6 flex justify-center">
-            <div
-              className="w-28 h-28 rounded-full flex items-center justify-center text-white text-5xl font-bold border-4 border-white overflow-hidden"
-              style={{ backgroundColor: "#006747" }}
-            >
-              {profile.profile_pic ? (
-                <img
-                  src={profile.profile_pic || "/placeholder.svg"}
-                  alt={`${profile.first_name} ${profile.last_name}`}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                `${profile.first_name[0]}${profile.last_name[0]}`
+      <div className="relative overflow-hidden bg-linear-to-br from-emerald via-emerald-dark to-teal px-4 pt-16 pb-24 text-center">
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+        <div className="relative mx-auto max-w-3xl">
+          <div className="flex justify-center">
+            <div className="relative">
+              <div className="h-28 w-28 overflow-hidden rounded-full border-4 border-white/90 shadow-pop">
+                {profile.profile_pic ? (
+                  <img
+                    src={profile.profile_pic}
+                    alt={`${profile.first_name} ${profile.last_name}`}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-emerald to-teal text-4xl font-bold text-white">
+                    {initials}
+                  </div>
+                )}
+              </div>
+              {profile.is_cr && (
+                <span
+                  className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-lime text-emerald-dark shadow-sm"
+                  title="Class Representative"
+                >
+                  <Crown size={15} strokeWidth={2.5} />
+                </span>
               )}
             </div>
           </div>
 
-          <h1 className="text-4xl font-bold text-white mb-2">
-            {profile.first_name} {profile.last_name}
-          </h1>
+          <div className="mt-5 flex items-center justify-center gap-1.5">
+            <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">
+              {profile.first_name} {profile.last_name}
+            </h1>
+            {profile.is_verified && (
+              <BadgeCheck size={22} className="shrink-0 fill-white text-emerald" aria-label="Verified" />
+            )}
+          </div>
 
-          <div className="flex justify-center gap-2 mb-4">
-            <span
-              className="px-3 py-1 rounded-full text-sm text-white"
-              style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
-            >
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
+            <span className="rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white">
               {profile.batch}
             </span>
-            {profile.is_cr && (
-              <span
-                className="px-3 py-1 rounded-full text-sm font-semibold"
-                style={{ backgroundColor: "#a3e635", color: "#1e293b" }}
-              >
-                Class Representative
+            {profile.program && (
+              <span className="rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white">
+                {profile.program}
               </span>
             )}
           </div>
 
           {profile.current_company && (
-            <div className="text-white/90">
-              <p className="font-semibold text-lg">
-                {profile.current_job_position}
-              </p>
+            <div className="mt-4 text-white/90">
+              <p className="text-lg font-semibold">{profile.current_job_position}</p>
               <p>at {profile.current_company}</p>
             </div>
           )}
@@ -158,140 +197,49 @@ export default function PublicProfilePage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+      <div className="mx-auto -mt-12 max-w-4xl px-4 pb-16">
+        <div className="rounded-2xl border border-border bg-surface p-6 shadow-pop sm:p-8">
           {/* About Section */}
           {profile.bio && (
             <div className="mb-8">
-              <h2
-                className="text-2xl font-bold mb-4"
-                style={{ color: "#006747" }}
-              >
-                About
-              </h2>
-              <p className="text-charcoal leading-relaxed">{profile.bio}</p>
+              <h2 className="font-display mb-3 text-xl font-bold text-ink">About</h2>
+              <p className="leading-relaxed text-body">{profile.bio}</p>
             </div>
           )}
 
-          {/* Professional Details */}
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 border-y"
-            style={{ borderColor: "#e2e8f0" }}
-          >
-            <div>
-              <h3
-                className="text-sm font-semibold mb-2"
-                style={{ color: "#007f8c" }}
-              >
-                UNIVERSITY ID
-              </h3>
-              <p className="font-medium">{profile?.uni_id}</p>
-            </div>
-            {profile?.country && (
-              <div>
-                <h3
-                  className="text-sm font-semibold mb-2"
-                  style={{ color: "#007f8c" }}
-                >
-                  Residing Country
-                </h3>
-                <p className="font-medium">{profile.country}</p>
-              </div>
-            )}
-
-            {profile.current_company && (
-              <div>
-                <h3
-                  className="text-sm font-semibold mb-2"
-                  style={{ color: "#007f8c" }}
-                >
-                  CURRENT COMPANY
-                </h3>
-                <p className="font-medium">{profile.current_company}</p>
-              </div>
-            )}
-
-            {profile?.current_job_position && (
-              <div>
-                <h3
-                  className="text-sm font-semibold mb-2"
-                  style={{ color: "#007f8c" }}
-                >
-                  JOB POSITION
-                </h3>
-                <p className="font-medium">{profile.current_job_position}</p>
-              </div>
-            )}
-
-            {/* ✅ Only show if logged in */}
-            {isLoggedIn && profile?.email && (
-              <div>
-                <h3
-                  className="text-sm font-semibold mb-2"
-                  style={{ color: "#007f8c" }}
-                >
-                  EMAIL
-                </h3>
-                <p className="font-medium">{profile.email}</p>
-              </div>
-            )}
-
-            {isLoggedIn && profile?.phone && (
-              <div>
-                <h3
-                  className="text-sm font-semibold mb-2"
-                  style={{ color: "#007f8c" }}
-                >
-                  PHONE
-                </h3>
-                <p className="font-medium">{profile.phone}</p>
-              </div>
-            )}
+          {/* Details */}
+          <div className="grid grid-cols-1 gap-x-8 gap-y-6 border-y border-border py-8 sm:grid-cols-2">
+            <InfoItem icon={<GraduationCap size={17} />} label="University ID" value={profile?.uni_id} />
+            <InfoItem icon={<Globe2 size={17} />} label="Residing Country" value={profile?.country} />
+            <InfoItem icon={<Building2 size={17} />} label="Current Company" value={profile.current_company} />
+            <InfoItem icon={<Building2 size={17} />} label="Job Position" value={profile?.current_job_position} />
+            {isLoggedIn && <InfoItem icon={<Mail size={17} />} label="Email" value={profile?.email} />}
+            {isLoggedIn && <InfoItem icon={<Phone size={17} />} label="Phone" value={profile?.phone} />}
           </div>
 
+          {!isLoggedIn && (profile.email || profile.phone) && (
+            <p className="mt-4 text-xs text-faint">
+              Contact details are visible to logged-in members only.
+            </p>
+          )}
+
           {/* Social Media Links */}
-          {(profile?.linkedin || profile?.facebook || profile?.instagram) && (
+          {socials.length > 0 && (
             <div className="mt-8">
-              <h2
-                className="text-2xl font-bold mb-4"
-                style={{ color: "#006747" }}
-              >
-                Connect
-              </h2>
-              <div className="flex gap-4 flex-wrap">
-                {profile.linkedin && (
+              <h2 className="font-display mb-4 text-xl font-bold text-ink">Connect</h2>
+              <div className="flex flex-wrap gap-3">
+                {socials.map(({ key, href, icon: Icon, label, color }) => (
                   <a
-                    href={profile.linkedin}
+                    key={key}
+                    href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-6 py-2 flex items-center gap-1 rounded-lg font-semibold text-white transition-all hover:shadow-lg"
-                    style={{ backgroundColor: "#0A66C2" }}
+                    className="flex items-center gap-2 rounded-xl px-5 py-2.5 font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:shadow-md"
+                    style={{ backgroundColor: color }}
                   >
-                    <Linkedin size={20} /> LinkedIn
+                    <Icon size={18} /> {label}
                   </a>
-                )}
-                {profile.facebook && (
-                  <a
-                    href={profile.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-6 py-2 rounded-lg flex items-center gap-1 font-semibold text-white transition-all hover:shadow-lg"
-                    style={{ backgroundColor: "#1877F2" }}
-                  >
-                    <Facebook size={20} /> Facebook
-                  </a>
-                )}
-                {profile.instagram && (
-                  <a
-                    href={profile.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-6 py-2 flex items-center gap-1 rounded-lg font-semibold transition-all text-white hover:shadow-lg"
-                    style={{ backgroundColor: "#E1306C" }}
-                  >
-                    <Instagram size={20} /> Instagram
-                  </a>
-                )}
+                ))}
               </div>
             </div>
           )}
@@ -301,10 +249,10 @@ export default function PublicProfilePage() {
         <div className="mt-8 text-center">
           <Link
             href="/"
-            className="inline-block px-6 py-3 rounded-lg font-semibold transition-all"
-            style={{ backgroundColor: "#f8fafc", color: "#006747" }}
+            className="inline-flex items-center gap-1.5 rounded-full px-6 py-3 font-semibold text-emerald transition-colors hover:bg-emerald-50"
           >
-            ← Back to Directory
+            <ArrowLeft size={16} />
+            Back to Directory
           </Link>
         </div>
       </div>

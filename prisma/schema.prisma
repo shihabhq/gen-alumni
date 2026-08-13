@@ -1,0 +1,58 @@
+// This schema is intentionally scoped to the BBA General department tables only.
+// The restored database also contains tables from the larger, unrelated event-management
+// platform it was dumped from (api_*, auth_*, django_*, event_*, participant_*) — those are
+// left untouched in Postgres but deliberately NOT modeled here, so Prisma Client only ever
+// sees the data this app actually owns.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model student_batch {
+  id                     BigInt                    @id @default(autoincrement())
+  title                  String                    @db.VarChar(100)
+  session                String                    @db.VarChar(20)
+  student_studentprofile student_studentprofile[]
+}
+
+model student_role {
+  id    BigInt @id @default(autoincrement())
+  title String @db.VarChar(100)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model student_studentprofile {
+  id                          BigInt                        @id @default(autoincrement())
+  first_name                  String                        @db.VarChar(30)
+  last_name                   String                        @db.VarChar(30)
+  bio                         String?
+  profile_pic                 String?                       @db.VarChar(200)
+  current_job_position        String?                       @db.VarChar(200)
+  current_company             String?                       @db.VarChar(200)
+  email                       String                        @unique @db.VarChar(254)
+  phone                       String?                       @db.VarChar(15)
+  linkedin                    String?                       @db.VarChar(200)
+  facebook                    String?                       @db.VarChar(200)
+  instagram                   String?                       @db.VarChar(200)
+  is_cr                       Boolean
+  is_verified                 Boolean
+  batch_id                    BigInt
+  uni_id                      String                        @db.VarChar(20)
+  country                     String?                       @db.VarChar(100)
+  student_batch               student_batch                 @relation(fields: [batch_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "student_studentprofile_batch_id_ccad868d_fk_student_batch_id")
+  student_studentverification student_studentverification?
+
+  @@index([batch_id], map: "student_studentprofile_batch_id_ccad868d")
+  @@index([email], map: "student_studentprofile_email_9abecc39_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model student_studentverification {
+  id                     BigInt                 @id @default(autoincrement())
+  student_id             BigInt                 @unique
+  student_studentprofile student_studentprofile @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "student_studentverif_student_id_1d613e1a_fk_student_s")
+}
