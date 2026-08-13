@@ -3,6 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
+
+const LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/students", label: "Students" },
+  { href: "/achievements", label: "Achievements" },
+];
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -10,135 +18,86 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    const handleScroll = () => setIsScrolled(window.scrollY > 8);
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
   const isActive = (path: string) => pathname === path;
 
   const linkClasses = (path: string) =>
-    `block px-3 py-2 font-medium transition-colors ${
-      isActive(path) ? "text-green-700" : "text-gray-700 hover:text-green-700"
+    `rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+      isActive(path)
+        ? "bg-emerald-50 text-emerald"
+        : "text-body hover:bg-emerald-50/60 hover:text-emerald"
     }`;
 
   return (
     <nav
-      className={`fixed top-0 w-full bg-white z-50 transition-all duration-300 ${
-        isScrolled ? " shadow-md" : ""
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled
+          ? "border-b border-border bg-surface/85 shadow-nav backdrop-blur-md"
+          : "border-b border-transparent bg-surface"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="shrink-0">
-            <span className="text-2xl font-bold text-green-700">BBA Gen</span>
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-emerald to-teal text-base font-bold text-white shadow-sm">
+              B
+            </span>
+            <span className="font-display text-lg font-bold text-ink">
+              BBA <span className="text-emerald">Gen</span>
+            </span>
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/" className={linkClasses("/")}>
-              Home
-            </Link>
-            <Link href="/about" className={linkClasses("/about")}>
-              About
-            </Link>
-            <Link href="/students" className={linkClasses("/students")}>
-              Students
-            </Link>
-            <Link href="/achievements" className={linkClasses("/achievements")}>
-              Achievements
-            </Link>
+          <div className="hidden items-center gap-1 md:flex">
+            {LINKS.map((link) => (
+              <Link key={link.href} href={link.href} className={linkClasses(link.href)}>
+                {link.label}
+              </Link>
+            ))}
             <Link
               href="/member/login"
-              className="px-6 py-2 rounded-lg font-medium text-white transition-all bg-green-700 hover:bg-green-800"
+              className="ml-3 rounded-full bg-emerald px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-dark"
             >
               Member
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              className="p-2 text-green-700"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
-            </button>
-          </div>
+          <button
+            className="rounded-lg p-2 text-emerald md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden bg-white shadow-md transition-all duration-300 overflow-hidden ${
-          isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        className={`overflow-hidden border-t border-border bg-surface transition-all duration-300 md:hidden ${
+          isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 border-t-0 opacity-0"
         }`}
       >
-        <div className="flex flex-col px-4 pb-4 space-y-2">
-          <Link
-            href="/"
-            onClick={() => setIsMenuOpen(false)}
-            className={linkClasses("/")}
-          >
-            Home
-          </Link>
-          <Link
-            href="/about"
-            onClick={() => setIsMenuOpen(false)}
-            className={linkClasses("/about")}
-          >
-            About
-          </Link>
-          <Link
-            href="/students"
-            onClick={() => setIsMenuOpen(false)}
-            className={linkClasses("/students")}
-          >
-            Students
-          </Link>
-          <Link
-            href="/achievements"
-            onClick={() => setIsMenuOpen(false)}
-            className={linkClasses("/achievements")}
-          >
-            Achievements
-          </Link>
+        <div className="flex flex-col gap-1 px-4 py-3">
+          {LINKS.map((link) => (
+            <Link key={link.href} href={link.href} className={linkClasses(link.href)}>
+              {link.label}
+            </Link>
+          ))}
           <Link
             href="/member/login"
-            onClick={() => setIsMenuOpen(false)}
-            className="mt-2 px-6 py-2 text-center rounded-lg font-medium text-white bg-green-700 hover:bg-green-800 transition-all"
+            className="mt-2 rounded-full bg-emerald px-5 py-2.5 text-center text-sm font-semibold text-white transition-all hover:bg-emerald-dark"
           >
             Member
           </Link>

@@ -1,10 +1,11 @@
 "use client";
 
 import { Filters } from "@/app/page";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Building2, Globe2, Search, SlidersHorizontal, X } from "lucide-react";
+import { useDebounce } from "@/hooks/debounce";
+import BatchFilter from "@/components/BatchFilter";
 
-const BATCHES = Array.from({ length: 16 }, (_, i) => `BBA ${i + 1}`);
-// const PROGRAMS = ["BBA", "MBA"];
 const COUNTRIES = [
   "Bangladesh",
   "United States",
@@ -27,160 +28,114 @@ interface SearchBarProps {
 
 export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
   const [query, setQuery] = useState("");
-  const isClient = typeof window !== "undefined";
-  const initialShowFilters = isClient ? window.innerWidth >= 768 : false;
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<Filters>({ batch: "", company: "", country: "" });
 
-  const [showFilters, setShowFilters] = useState(initialShowFilters);
-  const [filters, setFilters] = useState({
-    batch: "",
-    program: "",
-    company: "",
-    country: "",
-  });
+  const debouncedQuery = useDebounce(query, 400);
+  const debouncedCompany = useDebounce(filters.company, 400);
 
-  const handleSearch = () => {
-    onSearch(query, filters);
-  };
+  const hasActiveFilters = filters.batch || filters.country || filters.company;
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
+  // Search-as-you-type: fires automatically whenever the debounced query or
+  // any filter changes, so results stay live without needing the button.
+  useEffect(() => {
+    onSearch(debouncedQuery, { ...filters, company: debouncedCompany });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery, debouncedCompany, filters.batch, filters.country]);
 
   const clearFilters = () => {
-    setFilters({ batch: "", program: "", company: "", country: "" });
+    setFilters({ batch: "", company: "", country: "" });
     setQuery("");
-    onSearch("", { batch: "", company: "", country: "" });
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full rounded-2xl bg-surface/95 p-4 shadow-pop backdrop-blur-sm sm:p-5">
       {/* Main Search Bar */}
-      <div className="flex flex-col md:flex-row gap-3 mb-4">
-        <input
-          type="text"
-          placeholder="Search by name, email, batch or company..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="flex-1 px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
-          style={{
-            borderColor: "#a3e635",
-            backgroundColor: "#f8fafc",
-          }}
-        />
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="relative flex-1">
+          <Search
+            size={18}
+            className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-faint"
+          />
+          <input
+            type="text"
+            placeholder="Search by name, university ID, or company..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full rounded-xl border border-border bg-offwhite py-3 pr-4 pl-11 text-ink transition-colors outline-none focus:border-emerald focus:bg-surface focus:ring-2 focus:ring-emerald/15"
+          />
+        </div>
         <button
-          onClick={handleSearch}
-          disabled={isLoading}
-          className="px-8 py-3 rounded-lg font-medium text-white transition-all"
-          style={{ backgroundColor: "#a3e635", color: "#1e293b" }}
+          onClick={() => setShowFilters(!showFilters)}
+          className={`flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-medium transition-colors ${
+            hasActiveFilters
+              ? "border-emerald bg-emerald-50 text-emerald"
+              : "border-border text-body hover:border-emerald/40 hover:text-emerald"
+          }`}
         >
-          {isLoading ? "Searching..." : "Search"}
+          <SlidersHorizontal size={16} />
+          Filters
+          {hasActiveFilters && (
+            <span className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald text-[10px] font-bold text-white">
+              {[filters.batch, filters.country, filters.company].filter(Boolean).length}
+            </span>
+          )}
         </button>
       </div>
 
-      {/* Filter Toggle */}
-      <button
-        onClick={() => setShowFilters(!showFilters)}
-        className="text-white mb-4 font-medium flex items-center gap-2"
-      >
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fillRule="evenodd"
-            d="M3 3a1 1 0 011-1h12a1 1 0 011 1H3zm0 3a1 1 0 011-1h6a1 1 0 011 1H3zm0 3a1 1 0 011-1h4a1 1 0 011 1H3zm12-1a1 1 0 100 2h.01a1 1 0 100-2H15z"
-            clipRule="evenodd"
-          />
-        </svg>
-        {showFilters ? "Hide" : "Show"} Filters
-      </button>
+      {isLoading && (
+        <p className="mt-2 text-xs font-medium text-faint">Searching…</p>
+      )}
 
       {/* Filters */}
       {showFilters && (
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6 rounded-lg"
-          style={{ backgroundColor: "rgba(255, 255, 255, 0.95)" }}
-        >
-          {/* Batch Filter */}
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              style={{ color: "#1e293b" }}
-            >
-              Batch
-            </label>
-            <select
-              value={filters.batch}
-              onChange={(e) => {
-                setFilters({ ...filters, batch: e.target.value });
-                onSearch(query, { ...filters, batch: e.target.value });
-              }}
-              className="w-full px-3 py-2 rounded border-2 focus:outline-none"
-              style={{ borderColor: "#007f8c" }}
-            >
-              <option value="">All Batches</option>
-              {BATCHES.map((batch) => (
-                <option key={batch} value={batch}>
-                  {batch}
-                </option>
-              ))}
-            </select>
+        <div className="mt-5 space-y-5 border-t border-border pt-5">
+          <BatchFilter value={filters.batch} onChange={(batch) => setFilters({ ...filters, batch })} />
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-ink">Company</label>
+              <div className="relative">
+                <Building2 size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-faint" />
+                <input
+                  type="text"
+                  placeholder="Search company..."
+                  value={filters.company}
+                  onChange={(e) => setFilters({ ...filters, company: e.target.value })}
+                  className="w-full rounded-xl border border-border bg-offwhite py-2.5 pr-3 pl-10 text-sm outline-none focus:border-emerald focus:bg-surface focus:ring-2 focus:ring-emerald/15"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-ink">Country</label>
+              <div className="relative">
+                <Globe2 size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-faint" />
+                <select
+                  value={filters.country}
+                  onChange={(e) => setFilters({ ...filters, country: e.target.value })}
+                  className="w-full appearance-none rounded-xl border border-border bg-offwhite py-2.5 pr-3 pl-10 text-sm outline-none focus:border-emerald focus:bg-surface focus:ring-2 focus:ring-emerald/15"
+                >
+                  <option value="">All Countries</option>
+                  {COUNTRIES.map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
 
-          {/* Company Filter */}
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              style={{ color: "#1e293b" }}
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="flex cursor-pointer items-center gap-1.5 text-sm font-medium text-muted hover:text-emerald"
             >
-              Company
-            </label>
-            <input
-              type="text"
-              placeholder="Search company..."
-              value={filters.company}
-              onChange={(e) =>
-                setFilters({ ...filters, company: e.target.value })
-              }
-              onKeyPress={handleKeyPress}
-              className="w-full px-3 py-2 rounded border-2 focus:outline-none"
-              style={{ borderColor: "#007f8c" }}
-            />
-          </div>
-
-          {/* Country Filter */}
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              style={{ color: "#1e293b" }}
-            >
-              Country
-            </label>
-            <select
-              value={filters.country}
-              onChange={(e) => {
-                setFilters({ ...filters, country: e.target.value });
-                onSearch(query, { ...filters, country: e.target.value });
-              }}
-              className="w-full px-3 py-2 rounded border-2 focus:outline-none"
-              style={{ borderColor: "#007f8c" }}
-            >
-              <option value="">All Countries</option>
-              {COUNTRIES.map((country) => (
-                <option key={country} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            onClick={clearFilters}
-            className="col-span-1 md:col-span-2 lg:col-span-4 px-4 py-2 rounded font-medium transition-colors"
-            style={{ backgroundColor: "#f8fafc", color: "#006747" }}
-          >
-            Clear Filters
-          </button>
+              <X size={14} />
+              Clear filters
+            </button>
+          )}
         </div>
       )}
     </div>

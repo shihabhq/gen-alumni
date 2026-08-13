@@ -2,21 +2,10 @@
 
 import { useState } from "react";
 import SearchBar from "@/components/SearchBar";
-import StudentCard from "@/components/StudentCard";
+import StudentCard, { Student, StudentCardSkeleton } from "@/components/StudentCard";
 import Link from "next/link";
+import { Users } from "lucide-react";
 import { searchStudents, getStudentProfiles } from "@/lib/api";
-
-interface Student {
-  id: number;
-  uni_id: string;
-  first_name: string;
-  last_name: string;
-  profile_pic?: string;
-  country: string;
-  current_company?: string;
-  current_job_position?: string;
-  batch: string;
-}
 
 export interface Filters {
   batch: string;
@@ -55,56 +44,67 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen bg-offwhite pt-20">
       {/* Hero Section */}
-      <div
-        className="py-20 px-4 text-center"
-        style={{
-          background: "linear-gradient(135deg, #006747 0%, #007f8c 100%)",
-        }}
-      >
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            BBA General Students and Alumni Network
+      <div className="relative overflow-hidden bg-linear-to-br from-emerald via-emerald-dark to-teal px-4 py-20 text-center sm:py-24">
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+        <div className="relative mx-auto max-w-3xl">
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-white/90 uppercase">
+            <Users size={13} />
+            BUP · Department of BBA General
+          </span>
+          <h1 className="font-display text-3xl font-bold text-white sm:text-5xl">
+            BBA General Students &amp; Alumni Network
           </h1>
-          <p className="text-base sm:text-lg text-white/90 mb-8">
+          <p className="mx-auto mt-4 max-w-xl text-base text-white/85 sm:text-lg">
             Connect, share, and grow with fellow alumni and current students
+            across every batch.
           </p>
-
-          <SearchBar onSearch={handleSearch} isLoading={isLoading} />
         </div>
       </div>
 
+      {/* Search — overlaps the hero for a tighter, more app-like feel */}
+      <div className="relative mx-auto -mt-8 max-w-3xl px-4">
+        <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+      </div>
+
       {/* Results Section */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="mx-auto max-w-7xl px-4 py-14">
         {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <div
-              className="animate-spin rounded-full h-12 w-12 border-b-2"
-              style={{ borderColor: "#006747" }}
-            ></div>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <StudentCardSkeleton key={i} />
+            ))}
           </div>
         ) : filteredStudents.length > 0 ? (
           <>
-            <h2
-              className="text-2xl font-bold mb-8"
-              style={{ color: "#006747" }}
-            >
+            <h2 className="mb-8 font-display text-2xl font-bold text-ink">
               {filteredStudents.length} Result
               {filteredStudents.length !== 1 ? "s" : ""}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredStudents.map((student) => (
                 <Link key={student.id} href={`/profile/${student.id}`}>
-                  <StudentCard student={student as Student} />
+                  <StudentCard student={student} />
                 </Link>
               ))}
             </div>
           </>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-lg text-charcoal/60">
-              Adjust your Search filters to get students
+          <div className="flex flex-col items-center py-20 text-center">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald">
+              <Users size={24} />
+            </div>
+            <p className="text-lg font-medium text-body">No students found</p>
+            <p className="mt-1 text-sm text-muted">
+              Try a different name, batch, or company.
             </p>
           </div>
         )}

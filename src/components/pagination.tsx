@@ -49,11 +49,10 @@ export default function Pagination({
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded border-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
-        style={{ borderColor: "#007f8c" }}
+        className="cursor-pointer rounded-full border border-border p-2 text-emerald transition-colors hover:border-emerald/40 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
         aria-label="Previous page"
       >
-        <ChevronLeft size={20} style={{ color: "#006747" }} />
+        <ChevronLeft size={18} />
       </button>
 
       <div className="flex gap-1">
@@ -62,18 +61,13 @@ export default function Pagination({
             key={index}
             onClick={() => typeof page === "number" && onPageChange(page)}
             disabled={page === "..." || page === currentPage}
-            className={`px-3 py-2 rounded font-medium transition-colors ${
+            className={`min-w-9 rounded-full px-3 py-2 text-sm font-medium transition-colors ${
               page === currentPage
-                ? "text-white cursor-default"
+                ? "cursor-default bg-emerald text-white shadow-sm"
                 : page === "..."
-                ? "cursor-default"
-                : "hover:bg-gray-100 cursor-pointer"
+                ? "cursor-default text-faint"
+                : "cursor-pointer text-body hover:bg-emerald-50 hover:text-emerald"
             }`}
-            style={{
-              backgroundColor: page === currentPage ? "#006747" : "transparent",
-              color: page === currentPage ? "white" : "#1e293b",
-              borderColor: "#007f8c",
-            }}
           >
             {page}
           </button>
@@ -83,11 +77,10 @@ export default function Pagination({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded border-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
-        style={{ borderColor: "#007f8c" }}
+        className="cursor-pointer rounded-full border border-border p-2 text-emerald transition-colors hover:border-emerald/40 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
         aria-label="Next page"
       >
-        <ChevronRight size={20} style={{ color: "#006747" }} />
+        <ChevronRight size={18} />
       </button>
     </div>
   );

@@ -1,11 +1,96 @@
 @import "tailwindcss";
 
 @theme {
+  /* Typography — variables are supplied by next/font in layout.tsx */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, sans-serif;
+
+  /* Brand */
   --color-emerald: #006747;
+  --color-emerald-dark: #004d34;
+  --color-emerald-50: #e9f5f0;
   --color-teal: #007f8c;
+  --color-teal-50: #e6f4f6;
   --color-lime: #a3e635;
+  --color-lime-dark: #84cc16;
+
+  /* Neutrals / text */
+  --color-ink: #0f172a;
+  --color-body: #334155;
+  --color-muted: #64748b;
+  --color-faint: #94a3b8;
   --color-offwhite: #f8fafc;
-  --color-charcoal: #1e293b;
-  --color-slate-gray: #1e293b;
-  --color-error: #ef4444;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  /* Legacy aliases kept so existing `text-charcoal` / `bg-offwhite` classes elsewhere keep working */
+  --color-charcoal: #0f172a;
+  --color-slate-gray: #334155;
+  --color-error: #dc2626;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 8px rgba(15, 23, 42, 0.06);
+  --shadow-card-hover: 0 4px 10px rgba(15, 23, 42, 0.06), 0 16px 32px -12px rgba(0, 103, 71, 0.22);
+  --shadow-nav: 0 1px 0 rgba(15, 23, 42, 0.06), 0 8px 24px -16px rgba(15, 23, 42, 0.15);
+  --shadow-pop: 0 8px 24px -8px rgba(15, 23, 42, 0.18);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--color-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--color-ink);
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: var(--color-lime);
+  color: var(--color-ink);
+}
+
+/* Slim, brand-tinted scrollbar so the long directory grid doesn't feel bare */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-strong);
+  border-radius: 999px;
+  border: 2px solid var(--color-offwhite);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-muted);
+}
+
+/* Hide scrollbar on the horizontally-scrolling batch chip row, keep it scrollable */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--color-border) 25%, #eef2f6 37%, var(--color-border) 63%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s linear infinite;
 }

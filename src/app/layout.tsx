@@ -1,7 +1,20 @@
 import { type ReactNode } from "react";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import "../styles/globals.css";
 import { Metadata } from "next";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "BBA GEN Student and Alumni Connect",
@@ -41,7 +54,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       <head>
         <title>BBA Alumni Network</title>
         <meta
@@ -49,7 +62,7 @@ export default function RootLayout({
           content="Connect with BBA General Department Alumni and Students"
         />
       </head>
-      <body className={`font-sans antialiased bg-offwhite`}>
+      <body className="font-sans antialiased bg-offwhite">
         <Navbar />
         {children}
       </body>
